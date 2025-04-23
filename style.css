@@ -13,12 +13,14 @@ h2 {
 
 .product-list {
   display: flex;
+  flex-direction: column; /* Это уже установлено на column */
   gap: 30px;
   padding-top: 30px;
   padding-left: 30px;
   padding-bottom: 30px;
-  overflow-x: auto;
+  overflow-y: auto;
 }
+
 
 .product {
   flex-direction: column;
@@ -27,12 +29,11 @@ h2 {
   border-radius: 10px;
   padding: 40px;
   width: 270px;
-  display: flex;
+  display: flex;  /* Убедитесь, что элементы внутри .product также flex */
   justify-content: space-between;
   padding-top: 10px;
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
   flex-shrink: 0;
-  
 }
 
 .product img {

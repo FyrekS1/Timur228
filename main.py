@@ -2,23 +2,35 @@ import telebot
 import os
 from dotenv import load_dotenv
 from telebot import types
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
+
+# Загрузка переменных окружения из .env
 load_dotenv()
 
+# Получение токена
 TOKEN = os.getenv("TOKEN")
-
 bot = telebot.TeleBot(TOKEN)
+
+# Отправка сообщения при старте
 bot.send_message(5500332720, "started")
 
+# Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    # Создаем клавиатуру с кнопкой, которая будет открывать Web App
-    markup = types.InlineKeyboardMarkup()
-    button = types.InlineKeyboardButton(text="Перейти в мини-приложение", url="https://fyreks1.github.io/Timur228")
-    markup.add(button)
-
-    # Отправляем приветственное сообщение с кнопкой
-    bot.send_message(message.chat.id, "Привет! Нажми на кнопку ниже, чтобы перейти в мини-приложение.", reply_markup=markup)
+    # Создание клавиатуры для пользователя
+    markup1 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    
+    # Кнопка для запуска Mini App
+    miniapp_button1 = KeyboardButton(
+        text="Запустить Mini App", 
+        web_app=WebAppInfo(url="https://fyreks1.github.io/Timur228")
+    )
+    
+    # Добавление кнопки на клавиатуру
+    markup1.add(miniapp_button1)
+    
+    # Отправка сообщения с клавиатурой
+    bot.send_message(message.chat.id, "Привет! Нажми на кнопку для запуска Mini App.", reply_markup=markup1)
 
 # Запуск бота
-if __name__ == '__main__':
-    bot.polling(none_stop=True)
+bot.infinity_polling()
