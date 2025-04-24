@@ -9,7 +9,21 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <h2>Халяль</h2>
+  <div id="cart-summary">Корзина: 0₽</div>
+
+  <div id="cart-menu" style="display: none;">
+    <h3>Ваша корзина:</h3>
+    <div id="cart-items"></div>
+    <p id="cart-total">Итого: 0₽</p>
+    <button id="buyButton">Заказать</button>
+    
+    <button id="courier" style="display: none;">Курьер</button>
+    <button id="pickup" style="display: none;">Самовывоз</button>
+  
+
+  </div>
+
+  <h2 id="halal">Халяль</h2>
   <div class="product-list">
     <div class="product">
       <img src="https://live.staticflickr.com/65535/54469491332_8b5c0d56f4_n.jpg" alt="Пельмени куриные">
@@ -20,7 +34,7 @@
       <button>В корзину</button>
     </div>
     <div class="product">
-      <img src="https://live.staticflickr.com/65535/54470598393_92a03c5e91_n.jpg" alt="Запеканка">
+      <img src="https://live.staticflickr.com/65535/54470598393_92a03c5e91_n.jpg" alt="Эчпочмак">
       <h3>Сочный эчпочмак с кониной</h3>  
       <p class="price">39₽/кг</p>
       <p>Состав: мука пшеничная в/с, сахар-песок, сливочное масло, сметана, сливки, кефир, соль, мясо конины, картофель, лук, перец черный.</p>
@@ -28,7 +42,7 @@
       <button id="add-to-cart">В корзину</button>
     </div>
     <div class="product">
-      <img src="https://live.staticflickr.com/65535/54470332816_5dbcbc421e_n.jpg" alt="Запеканка">
+      <img src="https://live.staticflickr.com/65535/54470332816_5dbcbc421e_n.jpg" alt="Фрикадельки">
       <h3>Фрикадельки говяжьи</h3>
       <p class="price">Цена: 355₽/500 г</p>
       <p>Состав: говядина, лук, соль поваренная пищевая, яйцо куриное.</p>

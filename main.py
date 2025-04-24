@@ -4,33 +4,49 @@ from dotenv import load_dotenv
 from telebot import types
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
 
-# Загрузка переменных окружения из .env
 load_dotenv()
 
-# Получение токена
 TOKEN = os.getenv("TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
-# Отправка сообщения при старте
+CREATOR_USERNAME = "@clinkz_main"
 bot.send_message(5500332720, "started")
 
 # Обработчик команды /start
 @bot.message_handler(commands=['start'])
+
 def send_welcome(message):
-    # Создание клавиатуры для пользователя
     markup1 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
-    
-    # Кнопка для запуска Mini App
-    miniapp_button1 = KeyboardButton(
-        text="Запустить Mini App", 
-        web_app=WebAppInfo(url="https://fyreks1.github.io/Timur228")
-    )
-    
-    # Добавление кнопки на клавиатуру
+
+#меню
+    miniapp_button1 = KeyboardButton(text="Открыть меню", web_app=WebAppInfo(url="https://fyreks1.github.io/Timur228"))
     markup1.add(miniapp_button1)
-    
-    # Отправка сообщения с клавиатурой
-    bot.send_message(message.chat.id, "Привет! Нажми на кнопку для запуска Mini App.", reply_markup=markup1)
+
+#поддержка
+    btn = KeyboardButton("Поддержка")
+    markup1.add(btn)
+
+#отзыв или предложение по улучшению
+    btn1 = KeyboardButton("Отзыв или предложение по улучшению")
+    markup1.add(btn1)
+
+#сообщение с кнопками
+    bot.send_message(message.chat.id, "Приветствуем вас в магазине Гастрономчик", reply_markup=markup1)
+
+@bot.message_handler(func=lambda message: message.text == "Поддержка")
+
+def send_creator(message):
+    bot.send_message(message.chat.id, f"Вы можете связаться с нами тут - {CREATOR_USERNAME}, либо же через кнопку отзыва")
+
+@bot.message_handler(func=lambda message: message.text == "Отзыв или предложение по улучшению")
+
+def feedback(message):
+    bot.send_message(message.chat.id, "Отправьте ваш отзыв")
+
+@bot.message_handler(func=lambda message: message.text)
+
+def send_feedack(message):
+    bot.send_message(5500332720, f"У вас новый отзыв - {message.text}")
 
 # Запуск бота
 bot.infinity_polling()
