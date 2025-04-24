@@ -31,7 +31,8 @@ document.querySelectorAll(".product").forEach(product => {
   const button = product.querySelector("button");
   const name = product.querySelector("h3").textContent;
   const priceText = product.querySelector(".price").textContent;
-  const price = parseInt(priceText.replace(/[^\d]/g, ""));
+  const price = parseInt(priceText.match(/\d+/)[0]);
+
 
   button.addEventListener("click", () => {
     cart.push({ name, price });
