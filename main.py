@@ -67,7 +67,8 @@ def handle_cart_data(message):
         bot.send_message(message.chat.id, order_message)
         # Отправляем данные администратору (или в другой чат)
         bot.send_message(5500332720, f"Новый заказ: \n{order_message}")
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print(e)
         bot.send_message(message.chat.id, "Ошибка при получении данных. Пожалуйста, попробуйте снова.")
 
 # Обработчики для других кнопок

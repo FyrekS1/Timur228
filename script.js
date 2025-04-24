@@ -1,26 +1,4 @@
-// Функция для получения chat_id
-async function getChatId() {
-  const url = `https://api.telegram.org/bot${botToken}/getUpdates`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data && data.result && data.result.length > 0) {
-      const chatId = data.result[0].message.chat.id; // Извлекаем chat_id первого сообщения
-      console.log('Chat ID:', chatId);
-      return chatId;
-    } else {
-      console.error('No updates found');
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching chat id:", error);
-    return null;
-  }
-}
-
-// Функция для отправки заказа в Telegram
+// Функция для отправки сообщения в Telegram
 async function sendOrderToTelegram(cart) {
   const items = cart.map(item => `${item.name} — ${item.price}₽`);
   const total = cart.reduce((sum, item) => sum + item.price, 0);
@@ -32,21 +10,21 @@ async function sendOrderToTelegram(cart) {
     ${total}₽ (${cart.length} шт.)
   `;
   
-  const chatId = await getChatId(); // Получаем chat_id динамически
-
-  if (!chatId) {
-    console.error("chatId is required");
-    return;
-  }
-
-  const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-  const body = {
-    chat_id: chatId,
-    text: message,
-  };
-
   try {
+    const chatId = await getChatId(); // Получаем chat_id динамически
+
+    if (!chatId) {
+      console.error("chatId is required");
+      return;
+    }
+
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    const body = {
+      chat_id: chatId,
+      text: message,
+    };
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -55,9 +33,29 @@ async function sendOrderToTelegram(cart) {
       body: JSON.stringify(body),
     });
     const data = await response.json();
+
     console.log("Message sent", data);
   } catch (error) {
     console.error("Error sending message:", error);
+  }
+}
+
+// Функция для получения chat_id
+async function getChatId() {
+  try {
+    const url = `https://api.telegram.org/bot${botToken}/getUpdates`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.result && data.result.length > 0) {
+      const chatId = data.result[0].message.chat.id; // Извлекаем chat_id первого сообщения
+      console.log('Chat ID:', chatId);
+      return chatId;
+    } else {
+      console.error('No updates found');
+    }
+  } catch (error) {
+    console.error("Error fetching chat id:", error);
   }
 }
 
@@ -135,10 +133,17 @@ backButton.addEventListener("click", async () => {
   // Отправляем данные через WebApp.sendData
   Telegram.WebApp.sendData(JSON.stringify(cartData));
 
-  // Закрываем WebApp
-  Telegram.WebApp.close();
-
   // Уведомление для пользователя
   alert("Ваш заказ оформлен!");
-  await sendOrderToTelegram(cart);
+
+  // Ждем, пока данные отправятся, и затем закрываем WebApp
+  try {
+    // Отправляем заказ в Telegram
+    await sendOrderToTelegram(cart);
+
+    // Закрываем WebApp
+    Telegram.WebApp.close();
+  } catch (error) {
+    console.error("Ошибка при отправке заказа:", error);
+  }
 });
