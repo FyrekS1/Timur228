@@ -1,13 +1,22 @@
+:root {
+  --bg-color: var(--tg-theme-bg-color);
+  --text-color: var(--tg-theme-text-color);
+  --button-color: var(--tg-theme-button-color);
+  --button-text-color: var(--tg-theme-button-text-color);
+  --hint-color: var(--tg-theme-hint-color);
+  --link-color: var(--tg-theme-link-color);
+  --secondary-bg-color: var(--tg-theme-secondary-bg-color);
+}
+
 body {
   margin: 0;
   padding: 10px;
   font-family: sans-serif;
-  background-color: var(--tg-theme-bg-color);
-  color: var(--tg-theme-text-color);
+  background-color: var(--bg-color);
+  color: var(--text-color);
   height: 100vh;
   overflow-y: auto;
 }
-
 
 h2 {
   margin-top: 20px;
@@ -19,60 +28,53 @@ h2 {
   flex-direction: column;
   gap: 30px;
   padding: 30px;
-  overflow-y: auto; 
-  overflow-x: hidden; 
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-
+#buyButton,
+#courier,
+#pickup,
+#add-to-cart {
+  color: var(--text-color); 
+  background-color: var(--button-color);
+  border: 1px solid var(--hint-color);
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
 #cart-summary {
   position: fixed;
   top: 10px;
   right: 10px;
-  background: #4CAF50;
-  color: white;
+  background: var(--button-color);
+  color: var(--button-text-color);
   padding: 10px 15px;
   border-radius: 10px;
   font-weight: bold;
   z-index: 1000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
+
 #cart-menu {
   padding: 20px;
-  background-color: #e7ffe7;
+  background-color: var(--secondary-bg-color);
   border-radius: 10px;
 }
 
 .product {
   flex-direction: column;
-  background: #fff;
-  color: #000;
+  background-color: var(--secondary-bg-color);
   border-radius: 10px;
-  padding: 40px;
+  padding: 20px 20px 10px;
   width: auto;
   display: flex;
   justify-content: space-between;
-  padding-top: 10px;
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
   flex-shrink: 0;
 }
-#courier {
-  color: #000000;
-  background-color: #d7ffd7;
-  border: 1px solid #abffab;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
 
-#pickup {
-  color: #000000;
-  background-color: #d7ffd7;
-  border: 1px solid #abffab;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
 .product img {
   width: 100%;
   border-radius: 8px;
@@ -98,8 +100,8 @@ h2 {
 
 button {
   padding-top: 10px;
-  background-color: #0088cc;
-  color: white;
+  background-color: var(--button-color);
+  color: var(--button-text-color);
   border: none;
   border-radius: 8px;
   padding: 8px;

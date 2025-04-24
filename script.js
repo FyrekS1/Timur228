@@ -10,6 +10,21 @@ const cartTotal = document.getElementById("cart-total");
 const backButton = document.getElementById("buy-button");
 const productList = document.querySelector(".product-list");
 
+function applyThemeColors() {
+  const theme = Telegram.WebApp.themeParams;
+
+  document.documentElement.style.setProperty('--bg-color', theme.bg_color || '#ffffff');
+  document.documentElement.style.setProperty('--text-color', theme.text_color || '#000000');
+  document.documentElement.style.setProperty('--button-color', theme.button_color || '#d7ffd7');
+  document.documentElement.style.setProperty('--button-text-color', theme.button_text_color || '#000000');
+  document.documentElement.style.setProperty('--hint-color', theme.hint_color || '#2ea12e');
+  document.documentElement.style.setProperty('--link-color', theme.link_color || '#0000ee');
+  document.documentElement.style.setProperty('--secondary-bg-color', theme.secondary_bg_color || '#e7ffe7');
+}
+
+applyThemeColors();
+
+
 // Функция обновления корзины
 function updateCart() {
   cartItems.innerHTML = "";

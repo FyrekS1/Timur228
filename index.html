@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Каталог</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -16,42 +15,38 @@
     <div id="cart-items"></div>
     <p id="cart-total">Итого: 0₽</p>
     <button id="buyButton">Заказать</button>
-    
-    <button id="courier" style="display: none;">Курьер</button>
-    <button id="pickup" style="display: none;">Самовывоз</button>
-  
-123
+    <button id="courier" style="display: none">Курьер</button>
+    <button id="pickup" style="display: none">Самовывоз</button>
   </div>
 
   <h2 id="halal">Халяль</h2>
   <div class="product-list">
     <div class="product">
-      <img src="https://live.staticflickr.com/65535/54469491332_8b5c0d56f4_n.jpg" alt="Пельмени куриные">
+      <img src="https://live.staticflickr.com/65535/54469491332_8b5c0d56f4_n.jpg" alt="Пельмени куриные" />
       <h3>Пельмени куриные</h3>
       <p class="price">438₽/кг</p>
-      <p>Состав: куриный фарш, лук репчатый, чеснок, соль поваренная пищевая, перец черный молотый, мука в/с, яйцо.</p>
-      <p>Пищевая ценность в 100 г: белки - 16 г, жиры - 13,5 г, углеводы - 22,3 г, 278,7 ккал.</p>
-      <button>В корзину</button>
-    </div>
-    <div class="product">
-      <img src="https://live.staticflickr.com/65535/54470598393_92a03c5e91_n.jpg" alt="Эчпочмак">
-      <h3>Сочный эчпочмак с кониной</h3>  
-      <p class="price">39₽/кг</p>
-      <p>Состав: мука пшеничная в/с, сахар-песок, сливочное масло, сметана, сливки, кефир, соль, мясо конины, картофель, лук, перец черный.</p>
-      <p>Пищевая ценность в 100 г: белки - 9,0 г, жиры - 20,0 г, углеводы - 21,0, 300 ккал.</p>
+      <p>Состав: куриный фарш, лук репчатый, чеснок, соль, перец, мука, яйцо.</p>
+      <p>Пищевая ценность: белки - 16 г, жиры - 13.5 г, углеводы - 22.3 г, 278.7 ккал.</p>
       <button id="add-to-cart">В корзину</button>
     </div>
     <div class="product">
-      <img src="https://live.staticflickr.com/65535/54470332816_5dbcbc421e_n.jpg" alt="Фрикадельки">
+      <img src="https://live.staticflickr.com/65535/54470598393_92a03c5e91_n.jpg" alt="Эчпочмак" />
+      <h3>Сочный эчпочмак с кониной</h3>
+      <p class="price">39₽/кг</p>
+      <p>Состав: мука, сахар, масло, сметана, кефир, соль, конина, картофель, лук.</p>
+      <p>Пищевая ценность: белки - 9 г, жиры - 20 г, углеводы - 21 г, 300 ккал.</p>
+      <button id="add-to-cart">В корзину</button>
+    </div>
+    <div class="product">
+      <img src="https://live.staticflickr.com/65535/54470332816_5dbcbc421e_n.jpg" alt="Фрикадельки" />
       <h3>Фрикадельки говяжьи</h3>
-      <p class="price">Цена: 355₽/500 г</p>
-      <p>Состав: говядина, лук, соль поваренная пищевая, яйцо куриное.</p>
-      <p>Пищевая ценность в 100 г: белки - 16 г, жиры - 13,5 г, углеводы - 22,3 г, 250,3 ккал.</p>
-      <button>В корзину</button>
+      <p class="price">355₽/500 г</p>
+      <p>Состав: говядина, лук, соль, яйцо.</p>
+      <p>Пищевая ценность: белки - 16 г, жиры - 13.5 г, углеводы - 22.3 г, 250.3 ккал.</p>
+      <button id="add-to-cart">В корзину</button>
     </div>
   </div>
 
   <script src="script.js"></script>
 </body>
-
 </html>
