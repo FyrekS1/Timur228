@@ -1,24 +1,27 @@
-
-// Функция для отправки сообщения в Telegram и получения chat_id
-function getChatId() {
+// Функция для получения chat_id
+async function getChatId() {
   const url = `https://api.telegram.org/bot${botToken}/getUpdates`;
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      if (data && data.result && data.result.length > 0) {
-        const chatId = data.result[0].message.chat.id; // Извлекаем chat_id первого сообщения
-        console.log('Chat ID:', chatId);
-        return chatId;
-      } else {
-        console.error('No updates found');
-      }
-    })
-    .catch(error => console.error("Error fetching chat id:", error));
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.result && data.result.length > 0) {
+      const chatId = data.result[0].message.chat.id; // Извлекаем chat_id первого сообщения
+      console.log('Chat ID:', chatId);
+      return chatId;
+    } else {
+      console.error('No updates found');
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching chat id:", error);
+    return null;
+  }
 }
 
 // Функция для отправки заказа в Telegram
-function sendOrderToTelegram(cart) {
+async function sendOrderToTelegram(cart) {
   const items = cart.map(item => `${item.name} — ${item.price}₽`);
   const total = cart.reduce((sum, item) => sum + item.price, 0);
   const message = `
@@ -29,7 +32,7 @@ function sendOrderToTelegram(cart) {
     ${total}₽ (${cart.length} шт.)
   `;
   
-  const chatId = getChatId(); // Получаем chat_id динамически
+  const chatId = await getChatId(); // Получаем chat_id динамически
 
   if (!chatId) {
     console.error("chatId is required");
@@ -43,15 +46,19 @@ function sendOrderToTelegram(cart) {
     text: message,
   };
 
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  }).then(response => response.json())
-    .then(data => console.log("Message sent", data))
-    .catch(error => console.error("Error sending message:", error));
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    console.log("Message sent", data);
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
 }
 
 Telegram.WebApp.expand(); // развернуть окно
@@ -118,7 +125,7 @@ cartSummary.addEventListener("click", () => {
 });
 
 // Когда пользователь нажимает кнопку "Оформить заказ"
-backButton.addEventListener("click", () => {
+backButton.addEventListener("click", async () => {
   const cartData = {
     items: cart.map(item => `${item.name} — ${item.price}₽`),
     total: cart.reduce((sum, item) => sum + item.price, 0),
@@ -133,4 +140,5 @@ backButton.addEventListener("click", () => {
 
   // Уведомление для пользователя
   alert("Ваш заказ оформлен!");
+  await sendOrderToTelegram(cart);
 });
