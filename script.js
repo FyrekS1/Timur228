@@ -64,22 +64,14 @@ cartSummary.addEventListener("click", () => {
 
 // Оформление заказа и отправка данных в Python-бота
 buyButton.addEventListener("click", () => {
-  // Берём реальный chat_id пользователя из Telegram WebApp
-  const user   = Telegram.WebApp.initDataUnsafe.user;
-  const chatId = user && user.id;
-
-  // Собираем данные корзины + метку источника
   const cartData = {
-    chatId,
-    items     : cart.map(i => `${i.name} — ${i.price}₽`),
+    items: cart, // теперь передаём как есть: [{ name, price }]
     total,
-    itemCount : cart.length,
-    source    : "webapp"
+    itemCount: cart.length,
+    source: "webapp"
   };
 
-  // Отправляем в main.py через sendData
   Telegram.WebApp.sendData(JSON.stringify(cartData));
-
   alert("Ваш заказ отправлен!");
   Telegram.WebApp.close();
 });

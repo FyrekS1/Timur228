@@ -9,67 +9,66 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
-ADMIN_CHAT_ID = 5500332720  # ваш админ-чат
+# Жестко заданный ID владельца
+ADMIN_CHAT_ID = 5500332720
 
-# /start — даём кнопку для WebApp и альтернативы
+# Команда /start — WebApp-кнопка и поддержка
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    markup = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(
         KeyboardButton(
             text="Открыть меню",
             web_app=WebAppInfo(url="https://fyreks1.github.io/Timur228")
         )
     )
-    markup.add(KeyboardButton("Поддержка"))
-    markup.add(KeyboardButton("Отзыв или предложение по улучшению"))
+    markup.add("Поддержка", "Отзыв или предложение по улучшению")
 
     bot.send_message(
         message.chat.id,
-        "Добро пожаловать в магазин «Гастрономчик»👋\n"
-        "Нажмите «Открыть меню» для каталога🛒\n"
-        "📞 +7(000)000-00-00 — 24/7",
+        "Добро пожаловать в магазин «Гастрономчик»! 🛒\n"
+        "Нажмите «Открыть меню» для выбора продуктов.",
         reply_markup=markup
     )
 
-# Универсальный обработчик: ждём JSON от WebApp
-@bot.message_handler(func=lambda m: True)
+# Обработка JSON от WebApp (без подтверждения пользователю)
+@bot.message_handler(func=lambda message: message)
 def handle_webapp_data(message):
-    text = message.text or ""
     try:
-        data = json.loads(text)
+        data = json.loads(message.text)
     except json.JSONDecodeError:
-        # Не JSON — обычное сообщение, игнорируем
         return
 
-    # Проверяем маркер и источник
     if data.get("source") != "webapp":
         return
 
-    # Извлекаем параметры
-    chat_id   = data.get("chatId", message.chat.id)
-    items     = data.get("items", [])
-    total     = data.get("total", 0)
-    itemCount = data.get("itemCount", 0)
+    items = data.get("items", [])
+    total = data.get("total", 0)
+    item_count = data.get("itemCount", 0)
 
-    # Формируем текст заказа
-    order_msg = "● Товары:\n" + "\n".join(items)
-    order_msg += f"\n\n● Итого: {total}₽ ({itemCount} шт.)"
+    item_lines = [f"• {item['name']} — {item['price']}₽" for item in items]
+    order_text = (
+        "📦 *Новый заказ!*\n\n"
+        + "\n".join(item_lines)
+        + f"\n\n💰 Итого: *{total}₽* ({item_count} шт.)"
+    )
 
-    # Отправляем пользователю
-    bot.send_message(chat_id, order_msg)
-    # Дублируем админу
-    bot.send_message(ADMIN_CHAT_ID, f"Новый заказ от {chat_id}:\n{order_msg}")
+    # Отправляем заказ только владельцу
+    bot.send_message(ADMIN_CHAT_ID, order_text, parse_mode="Markdown")
+
+    # Лог для отладки (опционально)
+    print(f"[LOG] Получен заказ: {data}")
 
 # Поддержка
-@bot.message_handler(func=lambda m: m.text == "Поддержка")
+@bot.message_handler(func=lambda message: message.text == "Поддержка")
 def support_handler(message):
-    bot.send_message(message.chat.id, "Наш менеджер свяжется с вами в течение 5 минут. 😇")
+    bot.send_message(message.chat.id, "Свяжемся с вами в течение 5 минут 😊")
 
 # Отзыв
 @bot.message_handler(func=lambda m: m.text == "Отзыв или предложение по улучшению")
 def feedback_handler(message):
-    bot.send_message(message.chat.id, "Пожалуйста, пришлите ваш отзыв или предложение.")
+    bot.send_message(message.chat.id, "Пожалуйста, напишите ваш отзыв или идею.")
 
 if __name__ == "__main__":
+    print("[INFO] Бот запущен. Ожидаем заказы...")
     bot.polling(none_stop=True)
