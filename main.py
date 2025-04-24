@@ -1,84 +1,75 @@
-import telebot
 import os
-from dotenv import load_dotenv
-from telebot import types
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
 import json
+import telebot
+from dotenv import load_dotenv
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
 
+# Загрузка токена из .env
 load_dotenv()
-
-TOKEN = os.getenv("TOKEN")  # Читаем токен из переменной окружения
+TOKEN = os.getenv("TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
-CREATOR_USERNAME = "@clinkz_main"
-bot.send_message(5500332720, "Bot started")
+ADMIN_CHAT_ID = 5500332720  # ваш админ-чат
 
-# Обработчик команды /start
+# /start — даём кнопку для WebApp и альтернативы
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    markup1 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    markup.add(
+        KeyboardButton(
+            text="Открыть меню",
+            web_app=WebAppInfo(url="https://fyreks1.github.io/Timur228")
+        )
+    )
+    markup.add(KeyboardButton("Поддержка"))
+    markup.add(KeyboardButton("Отзыв или предложение по улучшению"))
 
-    # Меню
-    miniapp_button1 = KeyboardButton(text="Открыть меню", web_app=WebAppInfo(url="https://fyreks1.github.io/Timur228"))
-    markup1.add(miniapp_button1)
+    bot.send_message(
+        message.chat.id,
+        "Добро пожаловать в магазин «Гастрономчик»👋\n"
+        "Нажмите «Открыть меню» для каталога🛒\n"
+        "📞 +7(000)000-00-00 — 24/7",
+        reply_markup=markup
+    )
 
-    # Поддержка
-    btn = KeyboardButton("Поддержка")
-    markup1.add(btn)
-
-    # Отзыв
-    btn1 = KeyboardButton("Отзыв или предложение по улучшению")
-    markup1.add(btn1)
-
-    # Сообщение с кнопками
-    bot.send_message(message.chat.id, """Добро пожаловать в магазин "Гастрономчик"👋
-Нажмите кнопку "Открыть приложение" чтобы просмотреть каталог/меню🛒🍜
-Наши контакты:
-📍 Адрес:
-🙍‍♀️ Менеджер по всем вопросам (укажите username)
-📞 +7(000)000-00-00
-🏪 Работаем 24/7
-🚛 Доставляем по всему городу
-""", reply_markup=markup1)
-
-# Обработчик данных, отправленных из WebApp
-@bot.message_handler(func=lambda message: message.text)
-def handle_cart_data(message):
+# Универсальный обработчик: ждём JSON от WebApp
+@bot.message_handler(func=lambda m: True)
+def handle_webapp_data(message):
+    text = message.text or ""
     try:
-        # Добавляем отладочную печать
-        print("Получены данные от WebApp:", message.text)
-        
-        cart_data = json.loads(message.text)
-        
-        items = "\n".join(cart_data["items"])
-        total = cart_data["total"]
-        item_count = cart_data["itemCount"]
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        # Не JSON — обычное сообщение, игнорируем
+        return
 
-        # Формируем сообщение
-        order_message = f"""
-        ● Товары:
-        {items}
-        
-        ● Итого:
-        {total}₽ ({item_count} шт.)
-        """
+    # Проверяем маркер и источник
+    if data.get("source") != "webapp":
+        return
 
-        # Отправляем сообщение с данными о заказе
-        bot.send_message(message.chat.id, order_message)
-        # Отправляем данные администратору (или в другой чат)
-        bot.send_message(5500332720, f"Новый заказ: \n{order_message}")
-    except json.JSONDecodeError as e:
-        print(e)
-        bot.send_message(message.chat.id, "Ошибка при получении данных. Пожалуйста, попробуйте снова.")
+    # Извлекаем параметры
+    chat_id   = data.get("chatId", message.chat.id)
+    items     = data.get("items", [])
+    total     = data.get("total", 0)
+    itemCount = data.get("itemCount", 0)
 
-# Обработчики для других кнопок
-@bot.message_handler(func=lambda message: message.text == "Поддержка")
-def send_creator(message):
-    bot.send_message(message.chat.id, "Наш менеджер свяжется с вами через 5 минут. 😇")
+    # Формируем текст заказа
+    order_msg = "● Товары:\n" + "\n".join(items)
+    order_msg += f"\n\n● Итого: {total}₽ ({itemCount} шт.)"
 
-@bot.message_handler(func=lambda message: message.text == "Отзыв или предложение по улучшению")
-def send_review(message):
-    bot.send_message(message.chat.id, "Пожалуйста, напишите ваш отзыв или предложение")
+    # Отправляем пользователю
+    bot.send_message(chat_id, order_msg)
+    # Дублируем админу
+    bot.send_message(ADMIN_CHAT_ID, f"Новый заказ от {chat_id}:\n{order_msg}")
 
-# Запускаем бота
-bot.polling(none_stop=True)
+# Поддержка
+@bot.message_handler(func=lambda m: m.text == "Поддержка")
+def support_handler(message):
+    bot.send_message(message.chat.id, "Наш менеджер свяжется с вами в течение 5 минут. 😇")
+
+# Отзыв
+@bot.message_handler(func=lambda m: m.text == "Отзыв или предложение по улучшению")
+def feedback_handler(message):
+    bot.send_message(message.chat.id, "Пожалуйста, пришлите ваш отзыв или предложение.")
+
+if __name__ == "__main__":
+    bot.polling(none_stop=True)
