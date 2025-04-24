@@ -4,7 +4,10 @@ body {
   font-family: sans-serif;
   background-color: var(--tg-theme-bg-color);
   color: var(--tg-theme-text-color);
+  height: 100vh;
+  overflow-y: auto;
 }
+
 
 h2 {
   margin-top: 20px;
@@ -13,13 +16,13 @@ h2 {
 
 .product-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  /* Это правильно — колонкой */
   gap: 30px;
-  padding-top: 30px;
-  padding-left: 30px;
-  padding-bottom: 30px;
-  overflow-x: auto;
+  padding: 30px;
+  overflow-y: auto;  /* Вертикальный скролл, а не по оси X */
+  overflow-x: hidden;  /* Отключаем горизонтальный скролл */
 }
+
 
 .product {
   flex-direction: column;
